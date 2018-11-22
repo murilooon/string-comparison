@@ -1,4 +1,3 @@
-
 package search;
 
 import java.io.BufferedReader;
@@ -7,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 
-public class NaiveSearch implements ISearchStrategy {
+public class NaiveSearch extends ISearchStrategyDecorator {
     
     String text, word;
     
@@ -28,6 +27,8 @@ public class NaiveSearch implements ISearchStrategy {
         try{
             reader = new BufferedReader(new FileReader(getClass().getClassLoader().getResource(text).getPath()));
             try {
+                startTimer();
+                
                 while((line = reader.readLine()) != null){
                     int n = line.length();
                     int m = word.length();
@@ -36,17 +37,25 @@ public class NaiveSearch implements ISearchStrategy {
                         while (j < m && line.charAt(i + j) == word.charAt(j))
                             j++;
                         if(j==m){
+                            stopTimer();
+                            busca.setTime(timer);
                             busca.setLine(line_index);
                             busca.setColumn(i);
+                            busca.save("NAIVE", text, word);
                             return busca;
                         }
                     }
                     line_index++;
                 }
+                stopTimer();
+                busca.setTime(timer);
             } catch (IOException ex) {System.out.println("Erro na leitura da linha");}
         } catch (FileNotFoundException e) {System.out.println("O arquivo não foi localizado");}
-        
-        return null;
+        //nao encontrado
+        busca.setLine(-1);
+        busca.setColumn(-1);
+        busca.save("NAIVE", text, word);
+        return busca;
     }
     
 }

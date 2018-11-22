@@ -1,4 +1,3 @@
-
 package search;
 
 import java.io.BufferedReader;
@@ -7,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 
-public class KMPSearch implements ISearchStrategy{
+public class KMPSearch extends ISearchStrategyDecorator{
  
     String text, word;
     private int[][] dfa;
@@ -43,6 +42,8 @@ public class KMPSearch implements ISearchStrategy{
         try{
             reader = new BufferedReader(new FileReader(getClass().getClassLoader().getResource(text).getPath()));
             try {
+                startTimer();
+                                
                 while((line = reader.readLine()) != null){
                     int j, M = word.length();
                     int i, N = line.length();
@@ -50,17 +51,25 @@ public class KMPSearch implements ISearchStrategy{
                         for (i = 0, j = 0; i < N && j < M; i++)
                             j = dfa[line.charAt(i)][j];
                         if (j == M){
+                            stopTimer();
+                            busca.setTime(timer);
                             busca.setLine(line_index);
                             busca.setColumn(i-M);
+                            busca.save("KMP", text, word);
                             return busca;
                         }
                     }
                     line_index++;
                 }
+                stopTimer();
+                busca.setTime(timer);
             } catch (IOException ex) {System.out.println("Erro na leitura da linha");}
         } catch (FileNotFoundException e) {System.out.println("O arquivo não foi localizado");}
-        
-        return null;
+        //nao encontrado
+        busca.setLine(-1);
+        busca.setColumn(-1);
+        busca.save("KMP", text, word);
+        return busca;
     }
     
 }

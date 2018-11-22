@@ -1,4 +1,3 @@
-
 package search;
 
 import java.io.BufferedReader;
@@ -8,7 +7,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Random;
 
-public class RabinKarpSearch implements ISearchStrategy{
+public class RabinKarpSearch extends ISearchStrategyDecorator{
     
     String text, word;
     private long wordHash;
@@ -40,11 +39,15 @@ public class RabinKarpSearch implements ISearchStrategy{
         try{
             reader = new BufferedReader(new FileReader(getClass().getClassLoader().getResource(text).getPath()));
             try {
+                startTimer();
+                
                 while((line = reader.readLine()) != null){
                     int N = line.length();
-                    if (N!=0){
+                    if (N!=0 && N>=M){
                         long lineHash = hash(line, M);
                         if (wordHash == lineHash && check(line, 0)){
+                            stopTimer();
+                            busca.setTime(timer);
                             busca.setLine(line_index);
                             busca.setColumn(0);
                             return busca;
@@ -54,21 +57,31 @@ public class RabinKarpSearch implements ISearchStrategy{
                             lineHash = (lineHash * R + line.charAt(i+M-1)) % Q;
                             if (wordHash == lineHash)
                                 if (check(line, i)){
+                                    stopTimer();
+                                    busca.setTime(timer);
                                     busca.setLine(line_index);
                                     busca.setColumn(i);
+                                    busca.save("RABIN", text, word);
                                     return busca;
                                 } 
                         }
                     }   
                     line_index++;
                 }
+                stopTimer();
+                busca.setTime(timer);
             } catch (IOException ex) {System.out.println("Erro na leitura da linha");}
         } catch (FileNotFoundException e) {System.out.println("O arquivo não foi localizado");}
-        
-        return null;
+        //nao encontrado
+        busca.setLine(-1);
+        busca.setColumn(-1);
+        busca.save("RABIN", text, word);
+        return busca;
     }
     
     private long hash(String key, int M) {
+      System.out.println(key);
+      System.out.println(M);
       long h = 0;
       for (int j = 0; j < M; j++)
          h = (R * h + key.charAt(j)) % Q;

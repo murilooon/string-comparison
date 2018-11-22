@@ -1,4 +1,3 @@
-
 package search;
 
 import java.io.BufferedReader;
@@ -7,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 
-public class BoyerMooreSearch implements ISearchStrategy{
+public class BoyerMooreSearch extends ISearchStrategyDecorator{
 
     String text, word;
     private int R;
@@ -35,6 +34,8 @@ public class BoyerMooreSearch implements ISearchStrategy{
         try{
             reader = new BufferedReader(new FileReader(getClass().getClassLoader().getResource(text).getPath()));
             try {
+                startTimer();
+                
                 while((line = reader.readLine()) != null){
                     int m = word.length();
                     int n = line.length();
@@ -49,18 +50,26 @@ public class BoyerMooreSearch implements ISearchStrategy{
                                 }
                             }
                             if (skip == 0){
+                                stopTimer();
+                                busca.setTime(timer);
                                 busca.setLine(line_index);
                                 busca.setColumn(i);
+                                busca.save("BOYER", text, word);
                                 return busca;
                             }
                         }
                     }
                     line_index++;
                 }
+                stopTimer();
+                busca.setTime(timer);
             } catch (IOException ex) {System.out.println("Erro na leitura da linha");}
         } catch (FileNotFoundException e) {System.out.println("O arquivo não foi localizado");}
-        
-        return null;
+        //nao encontrado
+        busca.setLine(-1);
+        busca.setColumn(-1);
+        busca.save("BOYER", text, word);
+        return busca;
     }
     
 }
