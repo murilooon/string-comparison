@@ -5,14 +5,17 @@
  */
 package view;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JTextArea;
 
 /**
  *
  * @author udesc
  */
-public class MainView extends javax.swing.JFrame implements IMainView{
-
+public class MainView extends javax.swing.JFrame implements IMainView {
+    ArrayList<String> artigos = new ArrayList<String>();
+    ViewController controller = new ViewController();
     /**
      * Creates new form MainView
      */
@@ -53,7 +56,30 @@ public class MainView extends javax.swing.JFrame implements IMainView{
         });
 
         listFiles.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Arquivo1.txt", "Arquivo2.txt", "Arquivo3.txt" };
+            /*File caminho = new File ("C:\\Users\\Eduardo\\Documents\\UDESC\\4_Semestre\\Projeto de Arquivos\\strings\\src\\main\\resources");
+            File[] file = caminho.listFiles();
+            if(file != null){
+                int tamanho = file.length;
+                for(int i=0; i<tamanho; i++){
+                    File f = file[i];
+                    if(f.isFile()){
+                        String [] strings = {f.getName()};
+                    }
+                }
+            }*/
+            //String[] strings = { getListFiles().toString() };
+            //public int getSize() { return file.length; }
+            //public String getElementAt(int i) { return file[i].getName(); }
+
+            String[] strings = { "AMidsummerNightsDream.txt", "AllsWellThatEndsWell.txt", "AntonyAndCleopatra.txt",
+                "AsYouLikeIt.txt", "Coriolanus.txt", "Cymbeline.txt", "Hamlet.txt", "HenryIV_PartI.txt",
+                "HenryIV_PartII.txt", "HenryV.txt", "HenryVIII.txt", "HenryVI_PartI.txt", "HenryVI_PartII",
+                "HenryVI_PartIII.txt", "Julios Caesar.txt", "KingJohn.txt", "KingLear.txt", "LovesLaborsLost.txt",
+                "Lucrece.txt", "Macbeth.txt", "MeasureForMeasure.txt", "MuchAdoAboutNothing.txt", "Othello.txt",
+                "PericlesPrinceOfTyre.txt", "RichardII.txt", "RomeoAndJuliet.txt", "Sonnets.txt", "TheComedyOfErrors.txt",
+                "TheMerchantOfVenice.txt", "TheMerryWivesOfWindsor.txt", "ThePhoenixAndTurtle.txt", "TheTamingOfTheShrew.txt",
+                "TheTempest.txt", "TheTwoGentlemenOfVerona.txt", "TheTwoNobleKinsmen.txt", "TheWintersTale.txt",
+                "TimonOfAthenes.txt", "TitusAndronicus.txt", "TroilusAndCressida.txt", "TwelfhNight.txt", "VenusAndAdonis.txt", };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
@@ -150,15 +176,19 @@ public class MainView extends javax.swing.JFrame implements IMainView{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFileActionPerformed
-        // TODO add your handling code here:
+        String a = listFiles.getSelectedValue();
+        artigos.add(a);
+        textResult.append(a);
+        textResult.append("\n");
     }//GEN-LAST:event_btnAddFileActionPerformed
 
     private void btnFindWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindWordActionPerformed
-        // TODO add your handling code here:
+        controller.procuraPalavra(artigos, this.getTextWordToFind());
+        this.setVisible(false);
     }//GEN-LAST:event_btnFindWordActionPerformed
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
-        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_btnExitActionPerformed
 
     /**
@@ -213,17 +243,19 @@ public class MainView extends javax.swing.JFrame implements IMainView{
 
     /**
      * Retorna a lista de arquivos
-     * @return 
+     *
+     * @return
      */
     @Override
-    public List<String> getListFiles() {
+    public List<String> getListFiles() {  
         return listFiles.getSelectedValuesList();
     }
 
     /**
      * Define a lista de valores do resultado
+     *
      * @param values
-     * @return 
+     * @return
      */
     @Override
     public void setTextResultValue(String values) {
@@ -232,7 +264,8 @@ public class MainView extends javax.swing.JFrame implements IMainView{
 
     /**
      * Pega os valores que já estao na lista
-     * @return 
+     *
+     * @return
      */
     @Override
     public String getTextResultValue() {
@@ -241,10 +274,11 @@ public class MainView extends javax.swing.JFrame implements IMainView{
 
     /**
      * Retorna a palavra que deve ser procurada
-     * @return 
+     *
+     * @return
      */
     @Override
     public String getTextWordToFind() {
-       return textWord.getText();
+        return textWord.getText();
     }
 }
